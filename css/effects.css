@@ -1,0 +1,115 @@
+/* V5 motion: progressive, restrained, and shared by every page. */
+:root {
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* A quiet reading-position cue, outside the page layout. */
+.reading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  height: 3px;
+  background: linear-gradient(90deg, var(--action), #b78aec);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+/* Separate entrance movement from hover transforms so they never compete. */
+.motion-ready .reveal {
+  translate: 0 0;
+  transition: opacity .75s var(--ease-out), translate .85s var(--ease-out),
+    transform .35s var(--ease-out), box-shadow .35s ease, border-color .3s ease;
+  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0ms, 0ms, 0ms;
+}
+.motion-ready .reveal:not(.is-visible) { opacity: 0; transform: none; translate: 0 24px; }
+.motion-ready .reveal.is-visible { opacity: 1; }
+.motion-ready .reveal:focus-within { opacity: 1; translate: none; }
+/* Filter changes own their entrance, avoiding a second scroll transition. */
+.motion-ready .work-card.is-filtered {
+  transition: transform .35s var(--ease-out), box-shadow .35s ease, border-color .3s ease;
+  transition-delay: 0s;
+}
+.effects-ready .e2-hero__image,
+.effects-ready .page-hero__image { animation: image-settle 1.8s var(--ease-out) both; }
+@keyframes image-settle { from { scale: 1.035; } to { scale: 1; } }
+
+/* Soft pointer light keeps the existing paper and lavender surfaces intact. */
+[data-spotlight] { position: relative; isolation: isolate; }
+[data-spotlight]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  z-index: 2;
+  border: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(340px circle at var(--light-x, 50%) var(--light-y, 50%), rgba(163, 119, 238, .12), transparent 72%);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.consultation-section .consultation-banner[data-spotlight]::after { content: ""; }
+
+.btn, .filter { transition: color .25s ease, background-color .25s ease, border-color .25s ease, box-shadow .3s ease, transform .3s var(--ease-out); }
+.btn svg { transition: transform .3s var(--ease-out); }
+.e2-nav a::after { transform-origin: left; transition: transform .35s var(--ease-out); }
+.service-list li, .mvo__item, .client-wall__item { transition: border-color .3s ease, box-shadow .35s ease, transform .35s var(--ease-out); }
+.pub { transition: border-color .3s ease, background-color .3s ease; }
+.pub__title { transition: color .3s ease; }
+.field label { transition: color .25s ease; }
+.field:focus-within label { color: var(--action); }
+.btn:focus-visible, .filter:focus-visible, .link-arrow:focus-visible,
+.e2-nav a:focus-visible { outline: 2px solid var(--action); outline-offset: 5px; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-spotlight].is-lit::after { opacity: 1; }
+  .service-card:hover, .service-card:focus-within { transform: translateY(-6px); box-shadow: 0 22px 46px rgba(32, 24, 71, .1); }
+  .service-list li:hover, .mvo__item:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(32, 24, 71, .06); }
+  .client-wall__item:hover { transform: translateY(-3px); border-color: #bfb0d4; }
+  .pub:hover, .pub:focus-within { background-color: rgba(237, 229, 247, .35); }
+  .pub:hover .pub__title, .pub:focus-within .pub__title { color: var(--action); }
+  .btn:hover svg, .btn:focus-visible svg { transform: translateX(4px); }
+  .btn--primary:hover, .consultation-section .consultation-banner .btn--light:hover { box-shadow: 0 9px 24px rgba(78, 37, 205, .22); }
+  .btn:active, .consultation-section .consultation-banner .btn:active { transform: translateY(0) scale(.98); }
+}
+
+/* Draw the process connector as the steps enter the viewport. */
+.effects-ready .process-section .steps::before {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.3s var(--ease-out) .15s;
+}
+.effects-ready .process-section .steps.is-visible::before { transform: scaleX(1); }
+
+/* A brief orbital entrance, then stillness while the visitor reads. */
+.effects-ready .consultation-banner.is-visible .consultation-orbit__ring {
+  animation: orbit-settle 4.6s var(--ease-out) both;
+}
+.effects-ready .consultation-banner.is-visible .consultation-orbit__ring--two { animation-delay: .12s; }
+.effects-ready .consultation-banner.is-visible .consultation-orbit__ring--three { animation-delay: .24s; }
+.effects-ready .consultation-banner.is-visible .consultation-orbit__sphere { animation: sphere-settle 3.6s var(--ease-out) both; }
+.effects-ready .consultation-banner.is-visible .consultation-orbit__dot { animation: satellite-settle 4.6s var(--ease-out) both; }
+.effects-ready .consultation-banner.is-visible .consultation-orbit__dot--two { animation-delay: .2s; }
+@keyframes orbit-settle { from { rotate: -35deg; opacity: .2; } to { rotate: 0deg; opacity: 1; } }
+@keyframes sphere-settle { from { translate: 0 14px; scale: .88; } to { translate: 0 0; scale: 1; } }
+@keyframes satellite-settle { from { translate: -16px 14px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+
+/* Touch screens keep the same styling without sticky hover movement. */
+@media (hover: none), (pointer: coarse) {
+  .card:hover, .service-card:hover, .work-card:hover,
+  .btn:hover, .consultation-section .consultation-banner .btn:hover,
+  .work-card:hover .work-card__img img { transform: none; }
+  [data-spotlight]::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress { display: none; }
+  .motion-ready .reveal, .motion-ready .reveal:not(.is-visible) { opacity: 1; translate: none; transform: none; transition: none; }
+  .effects-ready .e2-hero__image, .effects-ready .page-hero__image,
+  .effects-ready .consultation-banner.is-visible .consultation-orbit > span { animation: none; }
+  .effects-ready .process-section .steps::before { transform: none; transition: none; }
+  .btn svg, .link-arrow svg, .e2-header__contact svg, .e2-hero__link svg { transform: none !important; }
+  [data-spotlight]::after { display: none; }
+  [data-parallax] { transform: none !important; will-change: auto; }
+}

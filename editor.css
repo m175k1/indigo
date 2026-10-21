@@ -1,0 +1,77 @@
+/* Gutenberg iframe styles; the original CSS is loaded immediately before this. */
+body, .editor-styles-wrapper {
+  background: var(--paper, #f8f6f1);
+  color: var(--body, #3d4559);
+  font-family: var(--font-body, Calibri, Carlito, sans-serif);
+  font-size: 1.125rem;
+  padding: 0 !important;
+  max-width: none !important;
+  overflow-x: clip;
+}
+.editor-styles-wrapper .is-root-container,
+.editor-styles-wrapper .block-editor-block-list__layout.is-root-container,
+.editor-styles-wrapper .wp-block-indigomx-section,
+.editor-styles-wrapper .block-editor-block-list__layout > .wp-block-indigomx-section {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+.editor-styles-wrapper .indigov2-section-block,
+.editor-styles-wrapper .indigov2-live-canvas,
+.editor-styles-wrapper .indigov2-preview-main {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  position: relative;
+  isolation: isolate;
+}
+.editor-styles-wrapper .indigov2-preview-main > section,
+.editor-styles-wrapper .indigov2-preview-main > div,
+.editor-styles-wrapper .indigov2-fixed-header,
+.editor-styles-wrapper .indigov2-fixed-footer {
+  margin: 0;
+  max-width: none;
+}
+.editor-styles-wrapper .indigov2-live-canvas {
+  background: var(--paper, #f8f6f1);
+  overflow: clip;
+}
+/* Make the unchanged shared site navigation visible but non-interactive here. */
+.editor-styles-wrapper .indigov2-fixed-header,
+.editor-styles-wrapper .indigov2-fixed-footer {pointer-events:none;}
+.editor-styles-wrapper .skip-link { display: none; }
+.editor-styles-wrapper .indigov2-live-canvas .reveal,
+.editor-styles-wrapper .indigov2-live-canvas .motion-ready .reveal {opacity:1 !important;transform:none !important;translate:none !important;}
+.editor-styles-wrapper .indigov2-live-canvas .logos__track {animation-play-state:paused !important;}
+.editor-styles-wrapper .indigov2-inline-text {
+  display:inline;
+  font:inherit;
+  letter-spacing:inherit;
+  line-height:inherit;
+  color:inherit;
+  padding:0;
+  margin:0;
+  border:0;
+}
+/* RichText uses the same tag and class as the static source for single-line elements. */
+.editor-styles-wrapper .indigov2-live-canvas [contenteditable="true"] {cursor:text;}
+.editor-styles-wrapper .indigov2-live-canvas [contenteditable="true"]:hover {outline:1px dashed rgba(78,37,205,.45);outline-offset:3px;}
+.editor-styles-wrapper .indigov2-live-canvas [contenteditable="true"]:focus {outline:2px solid rgba(78,37,205,.8);outline-offset:3px;}
+.editor-styles-wrapper .indigov2-media-click {cursor:pointer;}
+.editor-styles-wrapper .indigov2-media-click:hover {outline:3px solid rgba(78,37,205,.75);outline-offset:0;}
+.editor-styles-wrapper .indigov2-live-canvas a:not([contenteditable]) {cursor:default;}
+.editor-styles-wrapper .indigov2-map-placeholder {
+  min-height:260px;
+  background:#ebe9e4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#343b52;
+  font-size:14px;
+}
+/* Block outlines/drag handles belong to Gutenberg; never overlay source content. */
+.editor-styles-wrapper .wp-block-indigomx-section.is-selected:after,
+.editor-styles-wrapper .wp-block-indigomx-section.is-hovered:after {border-color:#4e25cd;}
+/* Standard core blocks can be added too. Constrain their typical widths like site sections. */
+.editor-styles-wrapper .is-root-container > :not(.wp-block-indigomx-section) {max-width:var(--container,1280px);margin-left:auto;margin-right:auto;}
