@@ -1,0 +1,145 @@
+/* ==========================================================================
+   index2 — editorial header + hero (e2 layout)
+   Header sits over the hero photo: centred logo, a tagline and contact link
+   either side, then a ruled row of links. Uses the site's fonts and colours.
+   ========================================================================== */
+
+.e2-wrap { width: 100%; max-width: 1480px; margin: 0 auto; padding: 0 clamp(16px, 2.5vw, 40px); }
+
+/* ---------- Header ---------- */
+.e2-header { position: absolute; top: 0; left: 0; right: 0; z-index: 50; color: var(--navy); font-family: var(--font-head); }
+.e2-header a { color: var(--navy); text-decoration: none; }
+
+.e2-header__top {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px;
+  padding: 22px clamp(0px, 1.5vw, 24px) 18px;
+  border-bottom: 1px solid rgba(0, 32, 96, 0.45);
+}
+.e2-header__tag { font-size: 1rem; letter-spacing: 0.02em; }
+.e2-header__brand img { height: 46px; width: auto; }
+.e2-header__contact {
+  justify-self: end; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 1rem; font-weight: 600; letter-spacing: 0.02em;
+}
+.e2-header__contact svg, .e2-hero__link svg { width: 1em; height: 1em; transition: transform .2s ease; }
+.e2-header__contact:hover { color: var(--purple); }
+.e2-header__contact:hover svg, .e2-hero__link:hover svg { transform: translate(2px, -2px); }
+
+.e2-nav { border-bottom: 1px solid rgba(0, 32, 96, 0.45); }
+.e2-nav ul { display: flex; justify-content: center; gap: clamp(20px, 3.2vw, 48px); list-style: none; margin: 0; padding: 0; }
+.e2-nav a { display: block; padding: 13px 0; font-size: 1.05rem; font-weight: 500; letter-spacing: 0.01em; position: relative; }
+.e2-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 2px;
+  background: var(--purple); transform: scaleX(0); transition: transform .2s ease;
+}
+.e2-nav a:hover { color: var(--purple); }
+.e2-nav a:hover::after { transform: scaleX(1); }
+.e2-nav__contact { display: none; }
+
+.e2-header .nav-toggle { display: none; justify-self: end; }
+
+/* ---------- Hero ---------- */
+.e2-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  min-height: clamp(680px, 66.6vw, 1000px);
+  background: #faf7f1;
+}
+.e2-hero__image {
+  position: absolute; inset: 0; z-index: -1;
+  width: 100%; height: 100%; object-fit: cover; object-position: center bottom;
+  will-change: transform; /* parallax: main.js shifts it down as the page scrolls; the gap above matches the wall colour */
+}
+.e2-hero__inner {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 40px;
+  padding-top: clamp(190px, 14vw, 220px);
+}
+.e2-hero__content { padding-left: clamp(0px, 1.5vw, 24px); max-width: 1000px; }
+.e2-hero h1 {
+  font-size: clamp(2.5rem, 4.5vw, 4.4rem); line-height: 1.08; letter-spacing: -0.025em;
+  margin: 0;
+}
+.e2-hero__lead { font-size: clamp(1.2rem, 1.7vw, 1.6rem); line-height: 1.45; color: var(--navy); max-width: 520px; margin: 24px 0 0; }
+.e2-hero__link {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; padding-bottom: 6px;
+  font-family: var(--font-head); font-weight: 600; font-size: 1.1rem;
+  color: var(--navy); text-decoration: none; border-bottom: 2px solid var(--navy);
+  transition: color .2s ease, border-color .2s ease;
+}
+.e2-hero__link:hover { color: var(--purple); border-color: var(--purple); }
+
+.e2-hero__values {
+  flex-shrink: 0; margin: 20px clamp(0px, 2vw, 40px) 0 0; padding-left: 22px;
+  border-left: 2px solid var(--purple);
+  font-family: var(--font-head); font-size: 1.15rem; line-height: 1.4; color: var(--navy);
+}
+
+/* Keep the photograph and copy on the same canvas on wide screens. Without
+   this cap, cover + bottom alignment crops the wall and lifts faces into h1. */
+@media (min-width: 1480px) {
+  .e2-hero__image {
+    left: 50%; right: auto;
+    width: 1480px; max-width: none;
+    translate: -50% 0;
+    object-position: center top;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+}
+
+/* ---------- Tablet / mobile ---------- */
+@media (min-width: 1101px) and (max-width: 1479px) {
+  .e2-hero { min-height: clamp(780px, 66.6vw, 1000px); }
+  .e2-hero__lead { max-width: 35vw; }
+}
+
+@media (max-width: 1100px) {
+  .e2-hero__values { display: none; }
+}
+
+/* Leave a clear text area above the photo before the compact header begins. */
+@media (min-width: 861px) and (max-width: 1100px) {
+  .e2-hero { min-height: 900px; }
+  .e2-hero__image { top: auto; height: 60%; object-position: 62% bottom; }
+  .e2-hero::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 40%; height: 18%;
+    z-index: 0; pointer-events: none;
+    background: linear-gradient(180deg, #faf7f1, rgba(250, 247, 241, 0));
+  }
+  .e2-hero__inner { position: relative; z-index: 1; }
+}
+
+@media (max-width: 860px) {
+  .e2-header__top { grid-template-columns: 1fr auto; padding: 16px 0 14px; }
+  .e2-header__tag, .e2-header__contact { display: none; }
+  .e2-header__brand img { height: 36px; }
+  .e2-header .nav-toggle { display: inline-flex; }
+
+  .e2-nav {
+    position: absolute; left: 16px; right: 16px; top: calc(100% + 8px);
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 8px; opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+  }
+  .e2-nav.is-open { opacity: 1; visibility: visible; transform: none; }
+  .e2-nav ul { flex-direction: column; gap: 0; }
+  .e2-nav a { padding: 13px 14px; border-radius: 10px; font-size: 1.05rem; }
+  .e2-nav a::after { display: none; }
+  .e2-nav a:hover { background: var(--lavender); color: var(--navy); }
+  .e2-nav__contact { display: block; }
+
+  /* Text on the plain wall up top, photo anchored to the bottom and faded into it */
+  .e2-hero { min-height: 820px; }
+  .e2-hero__image { top: auto; height: 58%; object-position: 62% bottom; }
+  .e2-hero::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 42%; height: 18%; z-index: 0; pointer-events: none;
+    background: linear-gradient(180deg, #faf7f1, rgba(250, 247, 241, 0));
+  }
+  .e2-hero__inner { position: relative; z-index: 1; padding-top: 120px; }
+  .e2-hero__content { padding-left: 0; }
+}
+
+@media (max-width: 480px) {
+  .e2-hero { min-height: 760px; }
+  .e2-hero h1 { font-size: 2.3rem; }
+  .e2-hero__lead { font-size: 1.15rem; }
+}
