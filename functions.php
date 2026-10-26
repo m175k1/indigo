@@ -62,7 +62,7 @@ function indigov2_blocks() {
     $headers = array();
     foreach (array('home', 'about', 'services', 'work', 'contact', 'inner') as $slug) {
         $path = get_template_directory() . '/partials/header-' . $slug . '.html';
-        $headers[$slug] = is_readable($path) ? indigov2_urls(file_get_contents($path)) : '';
+        $headers[$slug] = indigov2_header_html($slug);
     }
     $footer_file = get_template_directory() . '/partials/footer.html';
     $presets = array();
@@ -130,3 +130,80 @@ add_filter('body_class', function($classes) {
     $classes[] = is_front_page() ? 'v3-home' : 'v3-inner';
     return array_unique($classes);
 });
+/* ---------- Extra header links via Appearance → Menus (v2.2) ----------
+ * The default links in partials/header-*.html stay as they are.
+ * Items in the "indigo-extra" menu are added after them.
+ * If that menu is empty, the header HTML is unchanged. */
+
+add_action('after_setup_theme', function () {
+	register_nav_menus(array(
+		'indigo-extra' => __('Header – extra links (after default)', 'indigo'),
+	));
+});
+
+function indigov2_extra_menu_items() {
+	$locations = get_nav_menu_locations();
+	if (empty($locations['indigo-extra'])) return array();
+	$items = wp_get_nav_menu_items($locations['indigo-extra']);
+	if (!$items) return array();
+	// Top-level items only (the static header has no dropdown styling).
+	return array_values(array_filter($items, function ($i) { return (int) $i->menu_item_parent === 0; }));
+}
+
+// Reads the classes of the first link in a list, minus any "active/current" class.
+function indigov2_link_classes($fragment) {
+	$clean = function ($c) { return trim(preg_replace('~\S*(?:active|current|selected)\S*~i', '', $c)); };
+	$li = $a = '';
+	if (preg_match('~<li\b([^>]*)>~i', $fragment, $m) && preg_match('~\bclass=(["\'])(.*?)\1~i', $m[1], $c)) $li = $clean($c[2]);
+	if (preg_match('~<a\b([^>]*)>~i', $fragment, $m) && preg_match('~\bclass=(["\'])(.*?)\1~i', $m[1], $c)) $a = $clean($c[2]);
+	return array($li, $a);
+}
+
+function indigov2_extra_menu_html($li_class = '', $a_class = '') {
+	$items = indigov2_extra_menu_items();
+	if (!$items) return '';
+	$current = (!is_admin() && is_singular()) ? (int) get_queried_object_id() : 0;
+	$out = '';
+	foreach ($items as $item) {
+		$is_current = $current && $item->type === 'post_type' && (int) $item->object_id === $current;
+		$target = $item->target ? ' target="' . esc_attr($item->target) . '" rel="noopener"' : '';
+		$out .= '<li class="' . esc_attr(trim($li_class . ' indigo-extra-item')) . '">'
+			. '<a' . ($a_class ? ' class="' . esc_attr($a_class) . '"' : '')
+			. ' href="' . esc_url($item->url) . '"' . $target . ($is_current ? ' aria-current="page"' : '') . '>'
+			. esc_html($item->title) . '</a></li>';
+	}
+	return $out;
+}
+
+function indigov2_inject_extra_menu($html) {
+	if (!indigov2_extra_menu_items()) return $html; // nothing to add: output unchanged
+
+	// Option 1: exact placement with a marker in the partial file.
+	$marker = '<!-- indigo:menu-extra -->';
+	if (strpos($html, $marker) !== false) {
+		$parts = explode($marker, $html);
+		$out = array_shift($parts);
+		foreach ($parts as $part) {
+			$ul = strripos($out, '<ul');
+			list($li, $a) = indigov2_link_classes($ul === false ? '' : substr($out, $ul));
+			$out .= indigov2_extra_menu_html($li, $a) . $part;
+		}
+		return $out;
+	}
+
+	// Option 2 (automatic): append to the end of the link list in every <nav>.
+	return preg_replace_callback('~<nav\b.*?</nav>~is', function ($m) {
+		$nav = $m[0];
+		$end = strripos($nav, '</ul>');
+		if ($end === false) return $nav;
+		$start = strripos(substr($nav, 0, $end), '<ul');
+		list($li, $a) = indigov2_link_classes($start === false ? '' : substr($nav, $start, $end - $start));
+		return substr($nav, 0, $end) . indigov2_extra_menu_html($li, $a) . substr($nav, $end);
+	}, $html);
+}
+
+function indigov2_header_html($slug) {
+	$path = get_template_directory() . '/partials/header-' . $slug . '.html';
+	if (!is_readable($path)) return '';
+	return indigov2_inject_extra_menu(indigov2_urls(file_get_contents($path)));
+}

@@ -9,8 +9,5 @@ elseif (is_page('about')) $header_name = 'about';
 elseif (is_page('services')) $header_name = 'services';
 elseif (is_page('work')) $header_name = 'work';
 elseif (is_page('contact')) $header_name = 'contact';
-$header_file = get_template_directory() . '/partials/header-' . $header_name . '.html';
-if (is_readable($header_file)) {
-    echo indigov2_urls(file_get_contents($header_file));
-}
+echo indigov2_header_html($header_name);
 ?>
