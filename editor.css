@@ -75,3 +75,5 @@ body, .editor-styles-wrapper {
 .editor-styles-wrapper .wp-block-indigomx-section.is-hovered:after {border-color:#4e25cd;}
 /* Standard core blocks can be added too. Constrain their typical widths like site sections. */
 .editor-styles-wrapper .is-root-container > :not(.wp-block-indigomx-section) {max-width:var(--container,1280px);margin-left:auto;margin-right:auto;}
+/* v2.1: decorative overlays (usually aria-hidden) no longer block clicks on photos underneath. Editor only. */
+.editor-styles-wrapper .indigov2-live-canvas [aria-hidden="true"] {pointer-events:none;}
